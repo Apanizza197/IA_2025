@@ -1,7 +1,7 @@
-month,day,hour,minute
-4,22,7,35
-4,22,23,00
-4,24,7,33
-4,24,22,02
-4,25,16,23
-4,26,18,27
+month,day,hour,minute,state
+4,22,7,35,Normal
+4,22,23,00,Triste
+4,24,7,33,Muy Triste
+4,24,22,02,Triste
+4,25,16,23,Normal
+4,26,18,27,Normal
