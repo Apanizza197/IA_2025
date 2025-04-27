@@ -1,36 +1,36 @@
 #include <math.h> 
 #include <SPIFFS.h>    // Or #include <LittleFS.h> for LittleFS
 
-const int soilPin = 13;     // AO → ADC1 channel (GPIO13)
+const int soilPin = 13;     // Soil moisture sensor
 const int dryADC    = 4095;   // raw ADC when probe is in air
 const int wetADC    = 530;   // raw ADC when probe is in water
 
-const int ldrPin      = 34;   //light sensor LDR
-const int ntcPin      = 35;   //temperature sensor (termistor) NTC
+const int ldrPin      = 34;   // Light sensor LDR
+const int ntcPin      = 35;   // Temperature sensor (termistor) NTC
 
-#define Rf 4700  // Resistencia fija en ohmios (4.7kΩ)
-#define Vcc 3.3  // Voltaje de referencia (3.3V)
+#define Rf 4700  // Fixed resistance in ohms (4.7kΩ)
+#define Vcc 3.3  // Reference voltage (3.3V)
 
-// Función para calcular la resistencia del NTC usando el valor del ADC
+// Function to calculate the NTC resistance using the ADC value
 float calculateNTCResistance(int rawADC) {
-  // Convertir el valor del ADC a voltaje
+  // Convert the ADC value to voltage
   float voltage = (rawADC / 4095.0) * Vcc;
   
-  // Calcular la resistencia del NTC usando la ley del divisor de voltaje
+  // Calculate the NTC resistance using the voltage divider rule
   float RNTC = Rf * ((Vcc / voltage) - 1);
   
   return RNTC;
 }
 
-// Función para convertir la resistencia del NTC en temperatura (en °C)
+// Function to convert the NTC resistance to temperature (°C)
 float calculateTemperature(float RNTC) {
-  // Valores típicos para un NTC de 10kΩ a 25°C
-  float R0 = 10000.0;  // Resistencia a 25°C (10kΩ)
-  float B = 3950.0;    // Constante B para el NTC
+  // Typical values for a 10kΩ NTC at 25°C
+  float R0 = 10000.0;  // Resistance at 25°C (10kΩ)
+  float B = 3950.0;    // B constant for the NTC
   
-  // Ecuación de Steinhart-Hart simplificada
-  float temperatureK = 1.0 / (1.0 / 298.15 + (1.0 / B) * log(RNTC / R0));  // Temperatura en K
-  float temperatureC = temperatureK - 273.15;  // Convertir a °C
+  // Simplified Steinhart-Hart equation
+  float temperatureK = 1.0 / (1.0 / 298.15 + (1.0 / B) * log(RNTC / R0));  // Temperature in K
+  float temperatureC = temperatureK - 273.15;  // Convert to °C
   
   return temperatureC;
 }
@@ -53,8 +53,6 @@ void setup() {
 void loop() {
   // --- Soil moisture ---
   int rawSoil = analogRead(soilPin);
-  // Map raw [dryADC…wetADC] → [0…100]
-  // Note: if dryADC < wetADC, swap them or adjust accordingly.
   int soilPct = map(rawSoil, dryADC, wetADC, 0, 100);
   soilPct = constrain(soilPct, 0, 100);
 
