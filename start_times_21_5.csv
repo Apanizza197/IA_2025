@@ -1,0 +1,20 @@
+month,day,hour,minute,state
+4,22,7,35,Normal
+4,22,23,00,Triste
+4,24,7,33,Muy Triste
+4,24,22,02,Triste
+4,25,16,23,Normal
+4,26,18,27,Normal
+4,27,18,07,Normal
+4,28,13,29,Triste
+4,29,22,30,Muy Triste
+4,30,15,08,Muy Triste
+5,1,23,26,Critico
+5,2,13,05,Critico
+5,3,10,46,Muy Triste
+5,4,11,50,Muy Triste
+5,5,9,56,Triste
+5,7,22,37,Normal
+5,9,13,22,Normal
+5,10,11,42,Normal
+5,18,21,49,Normal
