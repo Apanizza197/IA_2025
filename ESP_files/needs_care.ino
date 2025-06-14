@@ -2,8 +2,8 @@
 #include <SPIFFS.h>
 
 const int soilPin = 13;      // Soil-moisture sensor  (ADC2)
-const int dryADC  = 4095;    // Probe in air
-const int wetADC  = 530;     // Probe in water
+const int dryADC  = 2600;    // Probe in air
+const int wetADC  = 750;     // Probe in water
 
 const int ldrPin  = 34;      // LDR (ADC1)
 const int ntcPin  = 35;      // NTC (ADC1)
@@ -23,6 +23,15 @@ const float COEF[6]  = { 0.353f, -0.375f, 0.097f, -0.300f, -0.244f, -0.080f };
 const float BIAS     =  0.175f;
 
 // ─────────────────────────────────  Helpers  ──────────
+int get_meaned_analog_reading(int pin){
+    long sum = 0;
+    for (int i = 0; i < 10; ++i) {
+        sum += analogRead(pin);
+        delay(10);
+    }
+    return sum / 10;
+}
+
 float calculateNTCResistance(int rawADC)
 {
     float voltage = rawADC * Vcc / 4095.0f;
@@ -81,10 +90,10 @@ String nthLineFromEnd(File &f)
 void writeFile(int soilPct, int lightPct, float temperature, int rawSoil, int rawLDR, int rawNTC){
   File logFile = SPIFFS.open("/sensor_log.txt", FILE_APPEND);
     if (logFile) {
-      String entry = String(millis()) + "," + 
+      String entry = String(millis()) + "," +
             String(soilPct) + "," +
             String(lightPct) + "," +
-            String(temperature, 2) + 
+            String(temperature, 2) + "," +
             String(rawSoil) + "," +
             String(rawLDR) + "," +
             String(rawNTC, 2) + "\n";
@@ -144,7 +153,7 @@ void printSensorData(int rawSoil, int soilPct,
 // ───────────────────────────────  Switch light ─────────
 void lightSwitch(bool on, int pin){
     if (on) digitalWrite(pin, HIGH);
-    else digitalWrite(pin, LOW);   
+    else digitalWrite(pin, LOW);
 }
 
 // ───────────────────────────────  Arduino setup  ────────
@@ -163,28 +172,27 @@ void setup()
     pinMode(bluePin,OUTPUT);
     lightSwitch(false, bluePin);
     lightSwitch(false, redPin);
-
 }
 
 // ───────────────────────────────  Main loop  ────────────
 void loop()
 {
+    delay(1000);
     // Soil-moisture %
-    int rawSoil = analogRead(soilPin);
+    int rawSoil = get_meaned_analog_reading(soilPin);
     int soilPct = constrain(map(rawSoil, dryADC, wetADC, 0, 100), 0, 100);
 
     // Light %
-    int rawLDR  = analogRead(ldrPin);
+    int rawLDR  = get_meaned_analog_reading(ldrPin);
     int lightPct = constrain(map(rawLDR, 570, 4095, 0, 100), 0, 100);
 
     // Temperature °C
-    int   rawNTC = analogRead(ntcPin);
+    int   rawNTC = get_meaned_analog_reading(ntcPin);
     float tempC  = calculateTemperature(calculateNTCResistance(rawNTC));
 
     printSensorData(rawSoil, soilPct, rawLDR, lightPct, rawNTC, tempC);
     Serial.println("Updating file with last records");
     writeFile(soilPct, lightPct, tempC, rawSoil, rawLDR, rawNTC);
-
 
     Serial.println("Retrieving historical values");
     // Fetch historic values
@@ -206,5 +214,5 @@ void loop()
     Serial.printf("¿Regar?  %s\n\n", mustWater ? "SÍ" : "no");
     lightSwitch(mustWater, bluePin);
 
-    delay(600'000);   // <- 10 s for demo; change to 600 000 for 10 min
+    delay(600000);   // <- 10 s for demo; change to 600 000 for 10 min
 }
