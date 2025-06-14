@@ -19,8 +19,8 @@ static constexpr uint16_t N_LINES  = 150;
 // ─────────────────────────────────  ML coefficients  ──
 const float MEAN[6]  = { 24.55f, 20.96f, 17.98f, 26.77f, 20.96f, 19.21f };
 const float SCALE[6] = { 24.23f, 2.40f, 41.75f, 24.35f, 2.73f, 41.56f };
-const float COEF[6]  = { 0.353f, -0.375f, 0.097f, -0.300f, -0.244f, -0.080f };
-const float BIAS     =  0.175f;
+const float COEF[6]  = { -0.28f, 0.863f, -0.22f, -0.541f, 1.591f, -0.278f };
+const float BIAS     =  -0.0696f;
 
 // ─────────────────────────────────  Helpers  ──────────
 int get_meaned_analog_reading(int pin){
@@ -53,7 +53,7 @@ bool needWater(float humidity, float temperature, float light, float pastHumidit
     for (int i = 0; i < 6; ++i)
         z += COEF[i] * ((x[i] - MEAN[i]) / SCALE[i]);
     float prob = 1.0f / (1.0f + expf(-z));
-    return prob > 0.5f;
+    return prob > 0.2f;
 }
 
 // ────────────────────────────────  Last-N-lines helper  ──
@@ -83,6 +83,7 @@ String nthLineFromEnd(File &f)
             if (linesLeft <= 0) line = c + line;
         }
     }
+    Serial.println(line);
     return line;
 }
 
@@ -152,8 +153,8 @@ void printSensorData(int rawSoil, int soilPct,
 
 // ───────────────────────────────  Switch light ─────────
 void lightSwitch(bool on, int pin){
-    if (on) digitalWrite(pin, HIGH);
-    else digitalWrite(pin, LOW);
+    if (on) digitalWrite(pin, LOW);
+    else digitalWrite(pin, HIGH);   
 }
 
 // ───────────────────────────────  Arduino setup  ────────
