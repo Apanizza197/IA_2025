@@ -3,9 +3,6 @@ import pandas as pd
 df = pd.read_csv("datos_planta2.csv")
 
 def get_latest_record():
-    """
-    Devuelve el registro más reciente como dict.
-    """
     latest = df.sort_values(by="timestamp").tail(1).iloc[0]
     return {
         "humidity": latest["humidity"],
@@ -16,10 +13,6 @@ def get_latest_record():
     }
     
 def get_latest_and_yesterday_record():
-    """
-    Devuelve el registro más reciente como dict.
-    Incluye los campos de ayer por si se usan.
-    """
     latest = df.sort_values(by="timestamp").tail(1).iloc[0]
     return {
         "humidity": latest["humidity"],
@@ -34,9 +27,6 @@ def get_latest_and_yesterday_record():
 
 
 def get_summary():
-    """
-    Estadísticas simples del histórico.
-    """
     summary = {
         "humidity_mean": round(df["humidity"].mean(), 2),
         "light_mean": round(df["light"].mean(), 2),
@@ -46,8 +36,9 @@ def get_summary():
     return summary
 
 def get_scientific_info():
-    """
-    Devuelve el contenido del resumen científico.
-    """
-    with open("resumen_cuidados.txt", "r") as f:
+    with open("docs/resumen_cuidados.txt", "r") as f:
         return f.read()
+    
+def get_ifas_info():
+    with open("docs/spathiphyllum_ifas.txt", "r") as f:
+        return f.read().strip()
