@@ -16,8 +16,7 @@ resource "aws_lambda_function" "post_data_lambda" {
 
   environment {
     variables = {
-      BUCKET_NAME = "flavios-bucket-ia-caj"
-      GEMINI_API_KEY = "AIzaSyDivAocZiirjN4ezRiViEdkh6tWCWSff7Y"
+      BUCKET_NAME = "NOT YET SET"
     }
   }
 }
@@ -40,7 +39,8 @@ resource "aws_lambda_function" "post_message_lambda" {
 
   environment {
     variables = {
-      BUCKET_NAME = "NOT YET SET"
+      BUCKET_NAME = "flavios-bucket-ia-caj"
+      GEMINI_API_KEY = "AIzaSyDivAocZiirjN4ezRiViEdkh6tWCWSff7Y"
     }
   }
 }
