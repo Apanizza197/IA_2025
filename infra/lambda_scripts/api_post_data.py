@@ -9,7 +9,7 @@ dynamodb = boto3.resource('dynamodb')
 table_name = os.environ.get('TABLE_NAME', 'flaviosRecords')
 table = dynamodb.Table(table_name)
 
-def lambda_handler(event, context):
+def handler(event, context):
     print("Event:", json.dumps(event))
 
     body = json.loads(event.get('body', '{}'))

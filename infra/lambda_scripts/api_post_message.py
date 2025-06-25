@@ -28,7 +28,7 @@ def call_gemini(prompt):
     )
     return response.text
 
-def lambda_handler(event, context):
+def handler(event, context):
     print("Event:", json.dumps(event))
 
     body = json.loads(event.get('body', '{}'))
