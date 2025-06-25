@@ -19,6 +19,8 @@ resource "aws_lambda_function" "post_data_lambda" {
       BUCKET_NAME = "NOT YET SET"
     }
   }
+
+  layers = [aws_lambda_layer_version.genai.arn]
 }
 
 # Zip lambda source code
@@ -41,6 +43,8 @@ resource "aws_lambda_function" "post_message_lambda" {
     variables = {
       BUCKET_NAME = "flavios-bucket-ia-caj"
       GEMINI_API_KEY = "AIzaSyDivAocZiirjN4ezRiViEdkh6tWCWSff7Y"
+      TELEGRAM_BOT_TOKEN = "7997151342:AAFmh3OdjoTkLhnTT53euVrmsPWbiKyCS7c"
     }
   }
+  layers = [aws_lambda_layer_version.genai.arn]
 }
