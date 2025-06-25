@@ -7,8 +7,8 @@ data "archive_file" "api_post_data" {
 
 # Create lambda function for post data
 resource "aws_lambda_function" "post_data_lambda" {
-  function_name    = "api-post-data"
-  handler          = "api-post-data.handler"
+  function_name    = "api_post_data"
+  handler          = "api_post_data.handler"
   runtime          = "python3.12"
   role             = aws_iam_role.lambda_api_role.arn 
   filename         = data.archive_file.api_post_data.output_path
@@ -31,8 +31,8 @@ data "archive_file" "api_post_message" {
 
 # Create lambda function
 resource "aws_lambda_function" "post_message_lambda" {
-  function_name    = "api-post-message"
-  handler          = "api-post-message.handler"
+  function_name    = "api_post_message"
+  handler          = "api_post_message.handler"
   runtime          = "python3.12"
   role             = aws_iam_role.lambda_api_role.arn 
   filename         = data.archive_file.api_post_message.output_path
