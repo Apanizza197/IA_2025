@@ -1,12 +1,14 @@
 import json
 import os
 import boto3
+import requests
 from google import genai
 from datetime import datetime, timezone
 
 # Configurar claves y clientes
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 S3_BUCKET = os.environ.get("S3_BUCKET")
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 
 dynamodb = boto3.resource('dynamodb')
 records_table = dynamodb.Table('flaviosRecords')
@@ -32,13 +34,18 @@ def handler(event, context):
     print("Event:", json.dumps(event))
 
     body = json.loads(event.get('body', '{}'))
-    user_message = body.get("message", "").strip()
-
-    if not user_message:
+    if "message" not in body:
         return {
-            "statusCode": 400,
-            "body": json.dumps({"error": "No se recibió mensaje"})
+            "statusCode": 200,
+            "body": json.dumps({"ok": True})  # Telegram requiere respuesta 200 aunque no sea un mensaje
         }
+        
+    message = body["message"]
+    chat_id = message["chat"]["id"]
+    user_message = message.get("text", "").strip()
+    
+    if not user_message:
+        return {"statusCode": 200, "body": json.dumps({"ok": True})}
 
     # Obtener datos de sensores
     latest = get_latest_record()
@@ -92,13 +99,21 @@ def handler(event, context):
 
     #Llamar a Gemini
     response_text = call_gemini(prompt)
+    
+    telegram_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    payload = {
+        "chat_id": chat_id,
+        "text": response_text
+    }
 
-    #Responder
+    try:
+        requests.post(telegram_url, json=payload)
+    except Exception as e:
+        print("Error enviando respuesta a Telegram:", e)
+
     return {
         "statusCode": 200,
-        "body": json.dumps({
-            "bot_response": response_text
-        })
+        "body": json.dumps({"ok": True})
     }
     
 def get_latest_record():
