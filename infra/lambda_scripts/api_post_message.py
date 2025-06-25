@@ -1,7 +1,7 @@
 import json
 import os
 import boto3
-import google.generativeai as genai
+from google import genai
 from datetime import datetime, timezone
 
 # Configurar claves y clientes
