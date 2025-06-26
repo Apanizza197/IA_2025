@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 
 # Configurar claves y clientes
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-S3_BUCKET = os.environ.get("S3_BUCKET")
+S3_BUCKET = os.environ.get("BUCKET_NAME")
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 
 dynamodb = boto3.resource('dynamodb')
@@ -52,8 +52,8 @@ def handler(event, context):
     summary = get_summary()
 
     # Leer documentos botánicos desde S3
-    botanical_basic = get_doc_from_s3('scientific_info.txt')
-    botanical_ifas = get_doc_from_s3('ifas_info.txt')
+    botanical_basic = get_doc_from_s3('resumen_cuidados.txt')
+    botanical_ifas = get_doc_from_s3('spathiphyllum_ifas.txt')
 
     # Construir prompt
     prompt = f"""

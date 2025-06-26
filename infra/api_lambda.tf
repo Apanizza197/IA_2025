@@ -19,8 +19,6 @@ resource "aws_lambda_function" "post_data_lambda" {
       BUCKET_NAME = "NOT YET SET"
     }
   }
-
-  layers = [aws_lambda_layer_version.genai.arn]
 }
 
 # Zip lambda source code
@@ -46,5 +44,21 @@ resource "aws_lambda_function" "post_message_lambda" {
       TELEGRAM_BOT_TOKEN = "7997151342:AAFmh3OdjoTkLhnTT53euVrmsPWbiKyCS7c"
     }
   }
-  layers = [aws_lambda_layer_version.genai.arn]
+}
+
+# Zip lambda source code for GET /status
+data "archive_file" "api_get_status" {
+  type        = "zip"
+  source_file = "./lambda_scripts/api_get_status.py"
+  output_path = "./lambda_outputs/api_get_status.zip"
+}
+
+# Lambda function for GET /status
+resource "aws_lambda_function" "get_status_lambda" {
+  function_name    = "api_get_status"
+  handler          = "api_get_status.handler"
+  runtime          = "python3.12"
+  role             = aws_iam_role.lambda_api_role.arn 
+  filename         = data.archive_file.api_get_status.output_path
+  source_code_hash = data.archive_file.api_get_status.output_base64sha256
 }
