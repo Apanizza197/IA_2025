@@ -12,7 +12,8 @@ def get_latest_record():
         'humidity': float(latest.get('humedad', 0)),
         'light': float(latest.get('luz', 0)),
         'temperature': float(latest.get('temperatura', 0)),
-        'state': latest.get('estado', 'Desconocido')
+        'necesitaRiego': latest.get('necesitaRiego', False),
+        'estaTriste': latest.get('estaTriste', False)
     }
 
 def handler(event, context):
